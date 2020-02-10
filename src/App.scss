@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Mono&display=swap');
+
+body {
+  overflow: hidden;
+  font-family: 'Roboto Condensed', 'Roboto';
+}
+
+.App {
+  text-align: center;
+
+  nav {
+    height: 48px;
+    background-color: rgb(27, 27, 27);
+    overflow: hidden;
+    font-family: Roboto;
+
+    ul {
+      list-style-type: none;
+      margin: 0 20vw;
+      width: 60vw;
+      display: flex;
+      flex-direction: row;
+      padding: 0;
+
+      li {
+        display: inline-block;
+        flex: 1;
+
+        a {
+          display: inline-block;
+          line-height: 48px;
+          cursor: pointer;
+          flex: 1;
+          width: 100%;
+          outline: none;
+          transition: background-color 0.3s ease-out;
+          color: #fd7800;
+          text-decoration: none;
+
+          &:hover {
+            background-color: rgba(0,0,0,.5);
+          }
+
+          &:active {
+            transition-duration: 0s;
+            background-color: rgba(0,0,0,1);
+          }
+        }
+      }
+    }
+  }
+}

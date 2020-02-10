@@ -1,0 +1,27 @@
+div.scroll {
+    overflow: auto;
+    width: 100vw;
+    height: calc(100vh - 48px);
+    background-color: rgb(102, 101, 101);
+}
+
+div.bracket {
+    display: flex;
+    flex-direction: row;
+
+    div.round {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-width: 192px;
+    }
+}
+
+div.updateTimeStamp {
+    position: absolute;
+    top: 0;
+    line-height: 48px;
+    right: 24px;
+    color: white;
+    font-size: .7em;
+}

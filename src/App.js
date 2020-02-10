@@ -1,13 +1,38 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import './App.scss';
+import {
+  MemoryRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
-function App() {
+import Bracket from './Bracket'
+
+export default function App() {
   return (
-    <div className="App">
-      <h1>BRACKET!!!</h1>
-    </div>
+    <Router>
+      <div className="App">
+        <nav>
+          <ul>
+            <li>
+              <Link to="/">Winners</Link>
+            </li>
+            <li>
+              <Link to="/losers">Losers</Link>
+            </li>
+          </ul>
+        </nav>
+
+        <Switch>
+          <Route path="/" exact>
+            <Bracket type="winners" />
+          </Route>
+          <Route path="/losers">
+            <Bracket type="losers" />
+          </Route>
+        </Switch>
+      </div>
+    </Router>
   );
 }
-
-export default App;
