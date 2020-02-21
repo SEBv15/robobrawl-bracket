@@ -22,6 +22,8 @@ function getQueryVariable(variable) {
 
 /**
  * Format Bracket. Should work for any double elimination bracket that is formatted like the 32 Team one
+ * Everything else in this react site is pretty dumb and just for displaying stuff neatly. 
+ * This function basically does all the conversion and calculations
  * 
  * @param {Object} raw The google sheet data
  */
@@ -47,7 +49,29 @@ function parseBracket(raw) {
                 }
             }
         }
+        var currentMatch = false
+        // recalculate minutes from now because sheets doesn't work if user doesn't put in date
+        var minutesFromNow = moment(row[6] + ", " + row[7],"hh:mm:ss a, M/D/YYYY").diff(moment(), 'minutes')
+        if (minutesFromNow <= 0 && !row[5]) {
+            currentMatch = true
+            // Check if previous match has a winner. If not, that one is the current one
+            for (let round of [...bracket.winners, ...bracket.losers]) {
+                for (let match of round.matches) {
+                    if (match.number == row[9] - 1) {
+                        if (!match.winner) {
+                            currentMatch = false
+                        }
+                        break
+                    }
+                }
+                if (!currentMatch) 
+                    break
+            }
+        }
         var timeString = moment(row[6],"hh:mm:ss a").format("hh:mm a")
+        if (currentMatch) {
+            //timeString = "NOW"
+        }
         if (timeString == "Invalid date") {
             timeString = "TBA"
         }
@@ -64,7 +88,8 @@ function parseBracket(raw) {
             date: row[7],
             dateString,
             minutesUntil: row[8],
-            number: row[9]
+            number: row[9],
+            currentMatch
         }
     }
 

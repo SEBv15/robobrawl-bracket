@@ -32,6 +32,7 @@ export default class BotInfo extends React.Component {
             
                 <div className="botInfo">
                     <h2>{this.props.name}</h2>
+                    <img src=""></img>
                     {this.props.scrapyardId?(
                     <a 
                         target="_blank"

@@ -13,14 +13,22 @@ export default class Match extends React.Component {
             return ""
         }
         try {
-            return (this.props.prevMatches[team].startsWith("W")?"Winner":"Loser") + " of round #" + this.props.prevMatchNumbers[team]
-        } catch(err) {
-            return ""
-        }
+            if (this.props.prevMatchNumbers[team]) {
+                return (this.props.prevMatches[team].startsWith("W")?"Winner":"Loser") + " of round #" + this.props.prevMatchNumbers[team]
+            }
+        } catch(err) {}
+        return ""
     }
     render() {
         return (
-            <div className="match" style={{height: this.props.height, marginTop: this.props.spacing * this.props.height}}>
+            <div 
+                className="match" 
+                style={{
+                    height: this.props.height, 
+                    marginTop: this.props.spacing * this.props.height,
+                    opacity: this.props.connector == "both"?(!this.props.teams[0] && !this.props.teams[1]?0.3:1):1, // grey out optional final match unless teams are slotted to for it
+                }}
+                >
                 {this.props.connector != null?(
                 <div 
                     className="connection" 
@@ -31,7 +39,7 @@ export default class Match extends React.Component {
                     <Connector scale={this.props.connectorHeight} type={this.props.connector} />
                 </div>
                 ):null}
-                <div className="box">
+                <div className="box" data-current-match={this.props.currentMatch}>
                     <div className="number">
                         <small>#</small>{this.props.number?this.props.number:"#"}
                     </div>
@@ -39,6 +47,7 @@ export default class Match extends React.Component {
                         {[0,1].map((i) => 
                             <span 
                                 className={"cont"+i} 
+                                key={i}
                                 style={{
                                     backgroundColor:this.props.highlight === this.props.teams[i]?"orange":(this.props.winner === this.props.teams[i]?"#0455A4":"unset"),
                                     cursor: this.props.highlight === this.props.teams[i]?"pointer":"default"

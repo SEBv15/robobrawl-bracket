@@ -1,3 +1,5 @@
+@import './vars.scss';
+
 div.match {
     height: 56px;
     box-sizing: border-box;
@@ -19,6 +21,10 @@ div.match {
         position: relative;
         background-color: white;
         box-shadow: 0px 5px 20px -9px rgba(0,0,0,0.75);    
+
+        &[data-current-match=true] {
+            box-shadow: 0 0 13px 4px $blue;
+        }
     }
 
     div.number {
