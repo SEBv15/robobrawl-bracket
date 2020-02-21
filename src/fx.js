@@ -1,3 +1,5 @@
+import moment from "moment";
+
 /**
  * Get GET parameter
  * 
@@ -45,15 +47,22 @@ function parseBracket(raw) {
                 }
             }
         }
+        var timeString = moment(row[6],"hh:mm:ss a").format("hh:mm a")
+        if (timeString == "Invalid date") {
+            timeString = "TBA"
+        }
+        var dateString = row[7]
         return {
             id: row[0],
             prevMatches: [row[1], row[2]],
-            prevMatchNumbers: prevMatchNumbers,
+            prevMatchNumbers,
             teams: [row[3], row[4]],
-            teamScrapyardIds: teamScrapyardIds,
+            teamScrapyardIds,
             winner: row[5]?row[5]:null,
             time: row[6],
+            timeString,
             date: row[7],
+            dateString,
             minutesUntil: row[8],
             number: row[9]
         }

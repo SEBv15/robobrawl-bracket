@@ -56,7 +56,7 @@ export default class Match extends React.Component {
                         )}
                     </div>
                     <div className="time">
-                        {this.props.time?this.props.time:"TDB"}
+                        {this.props.timeString?this.props.timeString:"TDB"}
                     </div>
                 </div>
                 {this.state.infoOpen&&this.state.infoName?(
