@@ -49,7 +49,7 @@ div.match {
         }
     }
 
-    div.contestants {
+    div.teams {
         flex-direction: column;
         display: flex;
         flex: 1;
@@ -67,12 +67,12 @@ div.match {
                 background-color: #ddd;
             }
 
-            &.contA {
+            &.cont0 {
                 line-height: 26px;
                 border-bottom: 1px solid #ddd;
             }
 
-            &.contB {
+            &.cont1 {
                 line-height: 22px;
                 border-top: 1px solid #ddd;
             }

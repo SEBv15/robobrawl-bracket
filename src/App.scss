@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto|Roboto+Condensed|Roboto+Mono&display=swap');
+@import './vars.scss';
 
 body {
   //overflow: hidden;
@@ -10,7 +11,7 @@ body {
 
   nav {
     height: 48px;
-    background-color: rgb(27, 27, 27);
+    background-color: $darkgrey;
     overflow: hidden;
     font-family: Roboto;
 
@@ -46,7 +47,41 @@ body {
             background-color: rgba(0,0,0,1);
           }
         }
+
+        span.title {
+          color: white;
+          font-size: 18px;
+          line-height: 48px;
+          font-family: 'Roboto Mono';
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
       }
     }
   }
+}
+
+div.loading {
+  display: flex;
+  height: calc(100vh - 48px - 24px);
+  flex-direction: column;
+  justify-content: center;
+
+  > div {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+  }
+}
+
+div.updatedAt {
+  height: 24px;
+  overflow: hidden;
+  background-color: $darkgrey;
+  color: white;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: right;
+  padding-right: 8px;
 }

@@ -21,13 +21,6 @@ const customStyles = {
   };
 
 export default class BotInfo extends React.Component {
-    getId = () => {
-        var f = this.props.bots.filter((b)=>b.name==this.props.name)
-        if (f[0]) {
-            return f[0].id?f[0].id:null
-        }
-        return null
-    }
     render() {
         return (
             <Modal
@@ -39,12 +32,12 @@ export default class BotInfo extends React.Component {
             
                 <div className="botInfo">
                     <h2>{this.props.name}</h2>
-                    {this.getId()?(
+                    {this.props.scrapyardId?(
                     <a 
                         target="_blank"
                         href={
                             "http://robobrawl.illinois.edu/scrapyard-bot/?bot_id="
-                            +this.getId()
+                            +this.props.scrapyardId
                         }
                         >Open scrapyard page</a>
                     ):null}

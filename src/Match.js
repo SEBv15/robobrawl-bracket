@@ -4,28 +4,79 @@ import './match.scss'
 
 import BotInfo from './BotInfo'
 
-function getConnectorType(prev) {
-    var type = "merge"
-    var prevWinner = [prev[0].startsWith("W"),prev[1].startsWith("W")]
-    if (prevWinner[0] && prevWinner[1])
-        type = "merge"
-    // winner continues and other is from different bracket
-    if (prevWinner[0] && !prevWinner[1])
-        type = "winner-loser"
-    // for the final match if it needs redo
-    if (prev[0].startsWith("W-W") && prev[1].startsWith("L-W"))
-        type = "both"
-    // when merging winner and loser bracket
-    if (prev[0].startsWith("W-W") && prev[1].startsWith("W-L"))
-        type = "winner-loser"
-    return type
+export default class Match extends React.Component {
+    state = {
+        infoOpen: false
+    }
+    getPrevMatchRef = (team) => {
+        if (this.props.prevMatches[team] == "none") {
+            return ""
+        }
+        try {
+            return (this.props.prevMatches[team].startsWith("W")?"Winner":"Loser") + " of round #" + this.props.prevMatchNumbers[team]
+        } catch(err) {
+            return ""
+        }
+    }
+    render() {
+        return (
+            <div className="match" style={{height: this.props.height, marginTop: this.props.spacing * this.props.height}}>
+                {this.props.connector != null?(
+                <div 
+                    className="connection" 
+                    style={{
+                        marginTop: (this.props.connector == "winner-winner"? - (this.props.connectorHeight - 1)/2 * this.props.height - 4 : -4)
+                    }}
+                    >
+                    <Connector scale={this.props.connectorHeight} type={this.props.connector} />
+                </div>
+                ):null}
+                <div className="box">
+                    <div className="number">
+                        <small>#</small>{this.props.number?this.props.number:"#"}
+                    </div>
+                    <div className="teams">
+                        {[0,1].map((i) => 
+                            <span 
+                                className={"cont"+i} 
+                                style={{
+                                    backgroundColor:this.props.highlight === this.props.teams[i]?"orange":(this.props.winner === this.props.teams[i]?"#0455A4":"unset"),
+                                    cursor: this.props.highlight === this.props.teams[i]?"pointer":"default"
+                                }}
+                                onMouseEnter={()=>this.props.setHighlight(this.props.teams[i])}
+                                onMouseLeave={()=>this.props.setHighlight(null)}
+                                onClick={()=>this.setState({
+                                    infoOpen: true, 
+                                    infoName: this.props.teams[i], 
+                                    infoId: this.props.teamScrapyardIds[i]
+                                })}
+                                >
+                                {this.props.teams[i]?this.props.teams[i]:<i>{this.getPrevMatchRef(i)}</i>}
+                            </span>
+                        )}
+                    </div>
+                    <div className="time">
+                        {this.props.time?this.props.time:"TDB"}
+                    </div>
+                </div>
+                {this.state.infoOpen&&this.state.infoName?(
+                    <BotInfo 
+                        open={this.state.infoName?this.state.infoOpen:false} 
+                        name={this.state.infoName} 
+                        scrapyardId={this.state.infoId}
+                        close={()=>this.setState({infoOpen: false})} 
+                        />
+                    ):null}
+            </div>
+        )
+    }
 }
 
 function Connector(props) {
     var scale = props.scale?props.scale:1
     var type = props.type
-    type = (type)?type:getConnectorType(props.prev)
-    if (type === "merge") {
+    type = props.type
+    if (type === "winner-winner") {
         return (
             <svg width={16} height={56*scale} xmlns="http://www.w3.org/2000/svg">
                 <g>
@@ -60,120 +111,4 @@ function Connector(props) {
         )           
     }
     return <></>
-}
-
-export default class Match extends React.Component {
-    state = {
-        height: this.props.height,
-        infoOpen: false
-    }
-    getMarginTop = (round) => {
-        if (this.props.type == "winners") {
-            switch(round) {
-                case 0:
-                    return 0
-                case 1:
-                    return this.state.height
-                case 2:
-                    return 3*this.state.height
-                case 3:
-                    return 7*this.state.height
-                case 4:
-                    return 8*this.state.height
-                case 5:
-                    return 8*this.state.height
-                case 6:                
-                    return 8*this.state.height
-            }
-        } else {
-            switch(round) {
-                case 2:
-                case 3:
-                    return this.state.height
-                case 4:
-                case 5:
-                    return this.state.height*3
-                case 6:
-                case 7:
-                    return this.state.height*7
-            }
-        }
-        return 0
-    }
-    getConnectorScale = (round) => {
-        if (this.props.type == "winners") {
-            switch(round) {
-                case 3:
-                    return 4;
-                case 4:
-                    return 8;
-            }
-        } else {
-            switch (round) {
-                case 6:
-                    return 4
-            }
-            return round/2
-        }
-        return round
-    }
-    getPrevMatchRef = (id) => {
-        var matchId = id.split("-")[1]
-        var startText = ((id.split("-")[0] == "W")?"Winner":"Loser") + " of match #"
-        for (let tab of ["winners", "losers"]) {
-            for (let round of this.props.bracket[tab]) {
-                let filtered = round.filter((e) => e.id.startsWith(matchId))
-                if (filtered.length > 0) {
-                    return (filtered[0].matchNumber?startText + filtered[0].matchNumber:"")
-                }
-            }
-        }
-    }
-    render() {
-        var connectorMargin = (getConnectorType(this.props.prevMatches) == "merge"?-(this.getConnectorScale(this.props.round)-1)*this.props.height/2:0)-4
-        return (
-            <div className="match" style={{height: this.props.height, marginTop: this.getMarginTop(this.props.round)}}>
-                {this.props.round != 0?(
-                <div className="connection" style={{marginTop: connectorMargin}}>
-                    <Connector scale={this.getConnectorScale(this.props.round)} prev={this.props.prevMatches} />
-                </div>
-                ):null}
-                <div className="box">
-                    <div className="number">
-                        <small>#</small>{this.props.matchNumber?this.props.matchNumber:"#"}
-                    </div>
-                    <div className="contestants">
-                        <span 
-                            className="contA" 
-                            style={{
-                                backgroundColor:this.props.highlight === this.props.contestants[0]?"orange":(this.props.winner === this.props.contestants[0]?"#0455A4":"unset"),
-                                cursor: this.props.highlight === this.props.contestants[0]?"pointer":"default"
-                            }}
-                            onMouseEnter={()=>this.props.setHighlight(this.props.contestants[0])}
-                            onMouseLeave={()=>this.props.setHighlight(null)}
-                            onClick={()=>this.setState({infoOpen: true, infoName: this.props.contestants[0]})}
-                            >
-                            {this.props.contestants[0]?this.props.contestants[0]:<i>{this.getPrevMatchRef(this.props.prevMatches[0])}</i>}
-                        </span>
-                        <span 
-                            className="contB" 
-                            style={{
-                                backgroundColor:this.props.highlight === this.props.contestants[1]?"orange":(this.props.winner === this.props.contestants[1]?"#0455A4":"unset"),
-                                cursor: this.props.highlight === this.props.contestants[1]?"pointer":"default"
-                            }}
-                            onMouseEnter={()=>this.props.setHighlight(this.props.contestants[1])}
-                            onMouseLeave={()=>this.props.setHighlight(null)}
-                            onClick={()=>this.setState({infoOpen: true, infoName: this.props.contestants[1]})}
-                            >
-                            {this.props.contestants[1]?this.props.contestants[1]:<i>{this.getPrevMatchRef(this.props.prevMatches[1])}</i>}
-                        </span>
-                    </div>
-                    <div className="time">
-                        {this.props.time?this.props.time:"TDB"}
-                    </div>
-                </div>
-                {this.state.infoOpen&&this.state.infoName?<BotInfo bots={this.props.bots} open={this.state.infoName?this.state.infoOpen:false} name={this.state.infoName} close={()=>this.setState({infoOpen: false})} />:null}
-            </div>
-        )
-    }
 }
