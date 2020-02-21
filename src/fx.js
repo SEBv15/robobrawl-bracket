@@ -59,20 +59,23 @@ function parseBracket(raw) {
         }
     }
 
-    // Format First Round
     var bracket = {
         winners: [],
         losers: []
     }
-    bracket.winners.push({matches: []})
-    for (let row of raw.first) {
-        if (row[0].startsWith("PA")) {
-            bracket.winners[0].matches.push(getMatch(row))
+
+    // Format First Round
+    if (raw.first) {
+        bracket.winners.push({matches: []})
+        for (let row of raw.first) {
+            if (row[0].startsWith("PA")) {
+                bracket.winners[0].matches.push(getMatch(row))
+            }
         }
     }
 
     // Format Winners
-    var round = 0;
+    var round = bracket.winners.length - 1;
     var currId = "";
     for (let row of raw.winners) {
         if (row[0].startsWith("W") && row[1] && row[1] != "") {
