@@ -90,8 +90,27 @@ div.match {
     }
 
     div.time {
-        line-height: 48px;
-        width: 48px;
+        width: 64px;
         background-color: #f37021;
+        font-size: 14px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        span.time {
+            font-size: 16px;
+
+            span.ampm {
+                opacity: .5;
+                font-size: 9px;
+                margin-left: 2px;
+                display: inline-block;
+            }
+        }
+
+        span.date {
+            font-size: 10px;
+            opacity: .5;
+        }
     }
 }

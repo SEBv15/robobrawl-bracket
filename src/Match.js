@@ -65,7 +65,17 @@ export default class Match extends React.Component {
                         )}
                     </div>
                     <div className="time">
-                        {this.props.timeString?this.props.timeString:"TDB"}
+                        {this.props.timeString?(
+                            <span class="time">
+                                {this.props.timeString.split(" ")[0]}
+                                <span className="ampm">{this.props.timeString.split(" ")[1].toUpperCase()}</span>
+                            </span>
+                            ):"TBA"}
+                        {this.props.dateString?(
+                            <span class="date">
+                                {this.props.dateString}
+                            </span>
+                        ):null}
                     </div>
                 </div>
                 {this.state.infoOpen&&this.state.infoName?(

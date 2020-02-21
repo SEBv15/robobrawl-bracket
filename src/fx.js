@@ -73,9 +73,19 @@ function parseBracket(raw) {
             //timeString = "NOW"
         }
         if (timeString == "Invalid date") {
-            timeString = "TBA"
+            timeString = null
         }
-        var dateString = row[7]
+        var dateString = moment(row[7],"M/D/YYYY").calendar(null, {
+            sameDay: '[]',
+            nextDay: '[Tomorrow]',
+            nextWeek: 'dddd',
+            lastDay: '[Yesterday]',
+            lastWeek: '[Last] dddd',
+            sameElse: 'DD/MM/YYYY'
+        });
+        if (dateString == "Invalid date") {
+            dateString = ""
+        }
         return {
             id: row[0],
             prevMatches: [row[1], row[2]],
