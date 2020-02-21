@@ -1,4 +1,6 @@
 import React from 'react';
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import PinchToZoom from 'react-pinch-and-zoom';
 
 import Match from './Match'
 
@@ -15,7 +17,21 @@ function getQueryVariable(variable) {
       }
     }
     return false;
-  }
+}
+
+function getBotInfo(raw) {
+    if (!raw.teams)
+        return []
+
+    var out = []
+    for (let bot of raw.teams) {
+        out.push({
+            name: bot[0],
+            id: bot[1]
+        })
+    }
+    return out
+}
 
 function calculateRounds(raw) {
     function lineToGame(line, secondIsLoser = false) {
@@ -125,11 +141,12 @@ export default class Bracket extends React.Component {
     updateData = async () => {
         this.sheetId = getQueryVariable("sheetId")
         if (this.sheetId) {
-          var data = await fetch("https://robobrawl.strempfer.dev/wp-json/robobrawl-bracket/v1/get-bracket/"+this.sheetId, {mode: 'no-cors'})
-          //var data = await fetch("http://192.168.1.185/")
+          //var data = await fetch("https://robobrawl.strempfer.dev/wp-json/robobrawl-bracket/v1/get-bracket/"+this.sheetId, {mode: 'no-cors'})
+          var data = await fetch("http://192.168.1.185/")
           data = await data.json()
           this.lastUpdate = data.time?new Date(data.time):null
           this.bracket = calculateRounds(data)
+          this.bots = getBotInfo(data)
           this.forceUpdate()
         }
     }
@@ -139,29 +156,33 @@ export default class Bracket extends React.Component {
         this.setState({highlight: name})
     }
     render() {
+        //var scale = this.bracket1?this.bracket1.offsetWidth/window.innerWidth:1;
+        var scale = 1;
         if (this.props.type == "winners") {
             return (
                 <>
-                <div className="scroll">
-                <div className="bracket">
+                      <TransformWrapper defaultScale={scale}>
+        <TransformComponent maxPositionX={10000} limitToBounds={false}>
+                <div className="bracket" style={{transformOrigin: "0 0",transform: `scale(${1/scale})`}} ref={(r) => this.bracket1 = r}>
                 {this.bracket?(
                     <>
                         {this.bracket.winners.map((round, i) => {
                             return (
-                                <div className="round" style={{
+                                <div className="round" key={i} style={{
                                     marginTop: i==0?0:((i==2?-this.state.height:(i==3?-3*this.state.height:0))-this.state.height/2)
                                 }}>
-                                    {round.map((match) => <Match setHighlight={this.setHighlight} highlight={this.state.highlight} height={this.state.height} bracket={this.bracket} type={"winners"} round={i} small={this.state.small} {...match} /> )}
+                                    {round.map((match) => <Match bots={this.bots} setHighlight={this.setHighlight} key={match.id} highlight={this.state.highlight} height={this.state.height} bracket={this.bracket} type={"winners"} round={i} small={this.state.small} {...match} /> )}
                                 </div>
                             )
                         })}
                     </>
                 ):null}
                 </div>
-                </div>
-                <div class="updateTimeStamp">
+                <div className="updateTimeStamp">
                     Updated: {this.lastUpdate?this.lastUpdate.getHours()+":"+String(this.lastUpdate.getMinutes()).padStart(2,"0")+":"+String(this.lastUpdate.getSeconds()).padStart(2,"0"):"never"}
                 </div>
+                </TransformComponent>
+      </TransformWrapper>
                 </>
             )
         } else {
@@ -173,10 +194,10 @@ export default class Bracket extends React.Component {
                     <>
                     {this.bracket.losers.map((round, i) => {
                         return (
-                            <div className="round" style={{
+                            <div className="round" key={i} style={{
                                 marginTop: (i < 2?0:(i==2 || i==3?-this.state.height/2:(i==4 || i==5?-this.state.height*1.5:-this.state.height*3.5)))
                             }}>
-                                {round.map((match) => <Match setHighlight={this.setHighlight} highlight={this.state.highlight} height={this.state.height} bracket={this.bracket} round={i} type={"losers"} small={this.state.small} {...match} /> )}
+                                {round.map((match) => <Match bots={this.bots} setHighlight={this.setHighlight} highlight={this.state.highlight} key={match.id} height={this.state.height} bracket={this.bracket} round={i} type={"losers"} small={this.state.small} {...match} /> )}
                             </div>
                         )
                     })}
@@ -184,7 +205,7 @@ export default class Bracket extends React.Component {
                 ):null}
                 </div>
                 </div>
-                <div class="updateTimeStamp">
+                <div className="updateTimeStamp">
                     Updated: {this.lastUpdate?this.lastUpdate.getHours()+":"+String(this.lastUpdate.getMinutes()).padStart(2,"0")+":"+String(this.lastUpdate.getSeconds()).padStart(2,"0"):"never"}
                 </div>
                 </>

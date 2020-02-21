@@ -1,0 +1,29 @@
+@import './vars.scss';
+
+div.botInfo {
+    button {
+        border: 2px solid $orange;
+        border-radius: 3px;
+        background-color: white;
+        cursor: pointer;
+        color: $orange;
+        display: block;
+        margin-right: 0;
+        margin-left: auto;
+        margin-top: 24px;
+        transition: background-color 0.3s, color 0.3s;
+        font-family: Roboto;
+        padding: 4px 16px;
+
+        &:hover {
+            background-color: $orange;
+            color: white;
+        }
+
+        &:active {
+            transition-duration: 0s;
+            background-color: darken($orange, 10);
+            border-color: darken($orange, 10);
+        }
+    }
+}

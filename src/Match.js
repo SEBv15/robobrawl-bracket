@@ -2,6 +2,8 @@ import React from 'react';
 
 import './match.scss'
 
+import BotInfo from './BotInfo'
+
 function getConnectorType(prev) {
     var type = "merge"
     var prevWinner = [prev[0].startsWith("W"),prev[1].startsWith("W")]
@@ -62,7 +64,8 @@ function Connector(props) {
 
 export default class Match extends React.Component {
     state = {
-        height: this.props.height
+        height: this.props.height,
+        infoOpen: false
     }
     getMarginTop = (round) => {
         if (this.props.type == "winners") {
@@ -142,19 +145,25 @@ export default class Match extends React.Component {
                     <div className="contestants">
                         <span 
                             className="contA" 
-                            style={{backgroundColor:this.props.highlight === this.props.contestants[0]?"orange":(this.props.winner === this.props.contestants[0]?"#0455A4":"unset")}}
+                            style={{
+                                backgroundColor:this.props.highlight === this.props.contestants[0]?"orange":(this.props.winner === this.props.contestants[0]?"#0455A4":"unset"),
+                                cursor: this.props.highlight === this.props.contestants[0]?"pointer":"default"
+                            }}
                             onMouseEnter={()=>this.props.setHighlight(this.props.contestants[0])}
                             onMouseLeave={()=>this.props.setHighlight(null)}
-                            onClick={()=>alert("Open Bot Info Dialog")}
+                            onClick={()=>this.setState({infoOpen: true, infoName: this.props.contestants[0]})}
                             >
                             {this.props.contestants[0]?this.props.contestants[0]:<i>{this.getPrevMatchRef(this.props.prevMatches[0])}</i>}
                         </span>
                         <span 
                             className="contB" 
-                            style={{backgroundColor:this.props.highlight === this.props.contestants[1]?"orange":(this.props.winner === this.props.contestants[1]?"#0455A4":"unset")}}
+                            style={{
+                                backgroundColor:this.props.highlight === this.props.contestants[1]?"orange":(this.props.winner === this.props.contestants[1]?"#0455A4":"unset"),
+                                cursor: this.props.highlight === this.props.contestants[1]?"pointer":"default"
+                            }}
                             onMouseEnter={()=>this.props.setHighlight(this.props.contestants[1])}
                             onMouseLeave={()=>this.props.setHighlight(null)}
-                            onClick={()=>alert("Open Bot Info Dialog")}
+                            onClick={()=>this.setState({infoOpen: true, infoName: this.props.contestants[1]})}
                             >
                             {this.props.contestants[1]?this.props.contestants[1]:<i>{this.getPrevMatchRef(this.props.prevMatches[1])}</i>}
                         </span>
@@ -163,6 +172,7 @@ export default class Match extends React.Component {
                         {this.props.time?this.props.time:"TDB"}
                     </div>
                 </div>
+                {this.state.infoOpen&&this.state.infoName?<BotInfo bots={this.props.bots} open={this.state.infoName?this.state.infoOpen:false} name={this.state.infoName} close={()=>this.setState({infoOpen: false})} />:null}
             </div>
         )
     }
