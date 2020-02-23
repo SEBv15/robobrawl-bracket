@@ -16,6 +16,7 @@ export default class App extends React.Component {
   state = {
     bracket: null,
     loading: true,
+    fail: false,
     highlight: null,
     matchHeight: 56,
     width: 0,
@@ -46,13 +47,17 @@ export default class App extends React.Component {
   }
   updateData = async (bracket = null) => {
     var data = await fetch("https://robobrawl.strempfer.dev/wp-json/robobrawl-bracket/v1/get-bracket/"+(bracket?bracket:this.state.bracket), {mode: 'no-cors'})
-    //var data = await fetch("http://192.168.1.185/")
+    //var data = await fetch("http://localhost/")
     data = await data.json()
+    if (data.length == 0) {
+      this.setState({loading: false, fail: true})
+      return
+    }
     this.name = data.name
     this.rawBracket = JSON.parse(data.data)
     this.lastUpdate = this.rawBracket.time?new Date(this.rawBracket.time):null
     this.bracket = fx.parseBracket(this.rawBracket)
-    this.setState({loading: false})
+    this.setState({loading: false, fail: false})
   }
   setHighlight = (name) => {
     if (name == "")
@@ -65,7 +70,7 @@ export default class App extends React.Component {
         <div className="App">
           <nav>
             <ul>
-              {(this.state.width > 780)?(
+              {(this.state.width > 780 && this.name)?(
                 <li>
                   <span className="title">{this.name}</span>
                 </li>

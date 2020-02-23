@@ -49,7 +49,7 @@ export default class Match extends React.Component {
                                 className={"cont"+i} 
                                 key={i}
                                 style={{
-                                    backgroundColor:this.props.highlight === this.props.teams[i]?"orange":(this.props.winner === this.props.teams[i]?"#0455A4":"unset"),
+                                    backgroundColor:this.props.highlight === this.props.teams[i]?"#aaa":(this.props.winner === this.props.teams[i]?"orange":"unset"),
                                     cursor: this.props.highlight === this.props.teams[i]?"pointer":"default"
                                 }}
                                 onMouseEnter={()=>this.props.setHighlight(this.props.teams[i])}
@@ -94,16 +94,17 @@ export default class Match extends React.Component {
 function Connector(props) {
     var scale = props.scale?props.scale:1
     var type = props.type
+    var stroke = "#fff"
     type = props.type
     if (type === "winner-winner") {
         return (
             <svg width={16} height={56*scale} xmlns="http://www.w3.org/2000/svg">
                 <g>
                     <title>Layer 1</title>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={1} x2={8} y1={1} x1={1} strokeWidth="2" stroke="#000" fill="none"/>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={56*scale-1} x2={8} y1={1} x1={8} strokeWidth="2" stroke="#000" fill="none"/>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_4" y2={56*scale-1} x2={8} y1={56*scale-1} x1={1} strokeWidth="2" stroke="#000" fill="none"/>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_5" y2={28*scale} x2={15} y1={28*scale} x1={9} strokeWidth="2" stroke="#000" fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={1} x2={8} y1={1} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={56*scale-1} x2={8} y1={1} x1={8} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_4" y2={56*scale-1} x2={8} y1={56*scale-1} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_5" y2={28*scale} x2={15} y1={28*scale} x1={9} strokeWidth="2" stroke={stroke} fill="none"/>
                 </g>
             </svg>
         )
@@ -112,9 +113,9 @@ function Connector(props) {
             <svg width={16} height={56} xmlns="http://www.w3.org/2000/svg">
                 <g>
                     <title>Layer 1</title>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={28} x2={8} y1={28} x1={1} strokeWidth="2" stroke="#000" fill="none"/>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={17} x2={8} y1={28} x1={8} strokeWidth="2" stroke="#000" fill="none"/>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_4" y2={17} x2={15} y1={17} x1={8} strokeWidth="2" stroke="#000" fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={28} x2={8} y1={28} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={17} x2={8} y1={28} x1={8} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_4" y2={17} x2={15} y1={17} x1={8} strokeWidth="2" stroke={stroke} fill="none"/>
                 </g>
             </svg>
         )       
@@ -123,8 +124,8 @@ function Connector(props) {
             <svg width={16} height={56} xmlns="http://www.w3.org/2000/svg">
                 <g>
                     <title>Layer 1</title>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={17} x2={15} y1={17} x1={1} strokeWidth="2" stroke="#000" fill="none"/>
-                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={39} x2={15} y1={39} x1={1} strokeWidth="2" stroke="#000" fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={17} x2={15} y1={17} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={39} x2={15} y1={39} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
                 </g>
             </svg>
         )           

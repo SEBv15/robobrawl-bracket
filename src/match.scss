@@ -23,7 +23,10 @@ div.match {
         box-shadow: 0px 5px 20px -9px rgba(0,0,0,0.75);    
 
         &[data-current-match=true] {
-            box-shadow: 0 0 13px 4px $blue;
+            //box-shadow: 0 0 13px 4px $blue;
+            div.time {
+                background-color: lighten($blue, 35);
+            }
         }
     }
 
@@ -75,12 +78,12 @@ div.match {
 
             &.cont0 {
                 line-height: 26px;
-                border-bottom: 1px solid #ddd;
+                border-bottom: 0.5px solid black;
             }
 
             &.cont1 {
                 line-height: 22px;
-                border-top: 1px solid #ddd;
+                border-top: 0.5px solid black;
             }
 
             i {
@@ -96,6 +99,9 @@ div.match {
         display: flex;
         flex-direction: column;
         justify-content: center;
+        border-left-color: black;
+        border-left-width: 2px;
+        border-left-style: solid;
 
         span.time {
             font-size: 16px;

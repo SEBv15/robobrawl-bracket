@@ -2,12 +2,13 @@ div.scroll {
     overflow: auto;
     width: 100vw;
     height: calc(100vh - 48px - 24px);
-    background-color: rgb(102, 101, 101);
+    background-color: #333;
 }
 
 div.bracket {
     display: flex;
     flex-direction: row;
+    margin-left: 32px;
 
     div.round {
         flex: 1;
