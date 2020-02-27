@@ -176,6 +176,8 @@ function parseBracket(raw) {
     // Fix connector for optional final game
     bracket.winners[bracket.winners.length - 1].connector = "both"
 
+    console.log(JSON.stringify(bracket))
+
     return bracket
 }
 
