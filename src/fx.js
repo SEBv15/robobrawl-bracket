@@ -31,7 +31,9 @@ function parseBracket(raw) {
     function getMatch(row) {
         var prevMatchNumbers = []
         var teamScrapyardIds = []
+        var prevMatches = [row[1], row[2]]
         // Get prev match number by recursing through the bracket that exists so far
+        let i = 0
         for (let id of [row[1].split("-")[1], row[2].split("-")[1]]) {
             prevMatchNumbers.push()
             let res = [...bracket.winners, ...bracket.losers].map((round) => {
@@ -39,7 +41,13 @@ function parseBracket(raw) {
                 return res.length == 0?undefined: res
             })
             res = res.filter((r) => r!==undefined)
-            prevMatchNumbers.push(res.length != 0?res[0][0].number:null)
+            if (res.length > 0 && res[0][0].hidden) {
+                let prevMatchIdx = res[0][0].prevMatchNumbers[0] === null || res[0][0].prevMatchNumbers[0] === undefined ? 1 : 0
+                prevMatchNumbers.push(res[0][0].prevMatchNumbers[prevMatchIdx])
+                prevMatches[i] = res[0][0].prevMatches[prevMatchIdx]
+            } else 
+                prevMatchNumbers.push(res.length != 0?res[0][0].number:null)
+            i += 1
         }
         for (let name of [row[3], row[4]]) {
             for (let tr of raw.teams) {
@@ -68,7 +76,7 @@ function parseBracket(raw) {
                     break
             }
         }
-        var timeString = moment(row[6],"hh:mm:ss a").format("hh:mm a")
+        var timeString = moment(row[6],"hh:mm:ss a").format("h:mm a")
         if (currentMatch) {
             //timeString = "NOW"
         }
@@ -86,9 +94,11 @@ function parseBracket(raw) {
         if (dateString == "Invalid date") {
             dateString = ""
         }
+        var hidden = row[3] == "-" || row[4] == "-"
+
         return {
             id: row[0],
-            prevMatches: [row[1], row[2]],
+            prevMatches,
             prevMatchNumbers,
             teams: [row[3], row[4]],
             teamScrapyardIds,
@@ -99,7 +109,8 @@ function parseBracket(raw) {
             dateString,
             minutesUntil: row[8],
             number: row[9],
-            currentMatch
+            currentMatch,
+            hidden
         }
     }
 
@@ -146,13 +157,35 @@ function parseBracket(raw) {
         }
     }
 
-    function calcSpacing(rounds) {
+    function calcSpacing(rounds, winners = false) {
+        if (winners) {
+            var sparseFirst = true
+            for (let i of Object.keys(rounds[0].matches)) {
+                if (i % 2 == 1 && !rounds[0].matches[i].hidden) sparseFirst = false
+            }
+            for (let i of Object.keys(rounds[1].matches)) {
+                if (sparseFirst)
+                    rounds[1].matches[i].connector = rounds[0].matches[i * 2].hidden ? null : "winner-loser"
+                else
+                    rounds[1].matches[i].connector = rounds[0].matches[i * 2].hidden ? (rounds[0].matches[i * 2 + 1].hidden ? null : "winner-bottom") : (rounds[0].matches[i * 2 + 1].hidden ? "winner-top" : "winner-winner")
+            }
+            if (sparseFirst) 
+                rounds[0].matches = rounds[0].matches.filter((v, i) => i % 2 == 0)
+        } else {
+            for (let i of Object.keys(rounds[1].matches)) {
+                rounds[1].matches[i].connector = rounds[0].matches[i].hidden ? null : "winner-loser"
+            }
+            for (let i of Object.keys(rounds[2].matches)) {
+                rounds[2].matches[i].connector = rounds[1].matches[i * 2].hidden ? (rounds[1].matches[i * 2 + 1].hidden ? null : "winner-bottom") : (rounds[0].matches[i * 2 + 1].hidden ? "winner-top" : "winner-winner")
+            }
+        }
+        
         for (let i of Object.keys(rounds)) {
             if (!rounds[i - 1]) {
                 rounds[i].spacing = 0
                 rounds[i].offset = 0
                 rounds[i].connector = null
-            } else if (rounds[i - 1].matches.length == rounds[i].matches.length) {
+            } else if (rounds[i - 1].matches.length == rounds[i].matches.length || (sparseFirst && i == 1)) {
                 rounds[i].spacing = rounds[i - 1].spacing
                 rounds[i].offset = rounds[i - 1].offset
                 rounds[i].connector = "winner-loser"
@@ -164,10 +197,12 @@ function parseBracket(raw) {
                 rounds[i].connectorHeight = rounds[i - 1].spacing + 1
             }
         }
+
+        if (rounds[0].matches.filter(v => !v.hidden).length == 0) rounds.splice(0, 1)
     }
 
     // Calculate SVG connector spacings
-    calcSpacing(bracket.winners)
+    calcSpacing(bracket.winners, true)
     calcSpacing(bracket.losers)
 
     // Add prev round id for final match prev loser
@@ -176,7 +211,7 @@ function parseBracket(raw) {
     // Fix connector for optional final game
     bracket.winners[bracket.winners.length - 1].connector = "both"
 
-    console.log(JSON.stringify(bracket))
+    //console.log(JSON.stringify(bracket))
 
     return bracket
 }

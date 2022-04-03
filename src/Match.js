@@ -26,7 +26,7 @@ export default class Match extends React.Component {
                 style={{
                     height: this.props.height, 
                     marginTop: this.props.spacing * this.props.height,
-                    opacity: this.props.connector == "both"?(!this.props.teams[0] && !this.props.teams[1]?0.3:1):1, // grey out optional final match unless teams are slotted to for it
+                    opacity: this.props.hidden ? 0 : this.props.connector == "both"?(!this.props.teams[0] && !this.props.teams[1]?0.3:1):1, // grey out optional final match unless teams are slotted to for it
                 }}
                 >
                 {this.props.connector != null?(
@@ -38,7 +38,7 @@ export default class Match extends React.Component {
                     >
                     <Connector scale={this.props.connectorHeight} type={this.props.connector} />
                 </div>
-                ):null}
+                ):<div style={{width:17.5}} />}
                 <div className="box" data-current-match={this.props.currentMatch}>
                     <div className="number">
                         <small>#</small>{this.props.number?this.props.number:"#"}
@@ -66,13 +66,13 @@ export default class Match extends React.Component {
                     </div>
                     <div className="time">
                         {this.props.timeString?(
-                            <span class="time">
+                            <span className="time">
                                 {this.props.timeString.split(" ")[0]}
                                 <span className="ampm">{this.props.timeString.split(" ")[1].toUpperCase()}</span>
                             </span>
                             ):"TBA"}
                         {this.props.dateString?(
-                            <span class="date">
+                            <span className="date">
                                 {this.props.dateString}
                             </span>
                         ):null}
@@ -129,6 +129,28 @@ function Connector(props) {
                 </g>
             </svg>
         )           
+    } else if (type === "winner-top") {
+        return (
+            <svg width={16} height={56*scale} xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <title>Layer 1</title>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_2" y2={1} x2={8} y1={1} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={28*scale} x2={8} y1={1} x1={8} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_5" y2={28*scale} x2={15} y1={28*scale} x1={9} strokeWidth="2" stroke={stroke} fill="none"/>
+                </g>
+            </svg>
+        )           
+    } else if (type === "winner-bottom") {
+        return (
+            <svg width={16} height={56*scale} xmlns="http://www.w3.org/2000/svg">
+                <g>
+                    <title>Layer 1</title>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_3" y2={56*scale-1} x2={8} y1={28*scale} x1={8} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_4" y2={56*scale-1} x2={8} y1={56*scale-1} x1={1} strokeWidth="2" stroke={stroke} fill="none"/>
+                    <line strokeLinecap="round" strokeLinejoin="round" id="svg_5" y2={28*scale} x2={15} y1={28*scale} x1={9} strokeWidth="2" stroke={stroke} fill="none"/>
+                </g>
+            </svg>
+        )
     }
     return <></>
 }

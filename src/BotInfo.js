@@ -40,10 +40,15 @@ export default class BotInfo extends React.Component {
             this.setState({loaded: true})
             return
         }
-        var data = await fetch("/wp-json/scrapyard/v1/get-bot/"+this.props.scrapyardId)
+        var data = await fetch("http://robobrawl.illinois.edu/wp-json/scrapyard/v1/get-bot/"+this.props.scrapyardId)
+        //var data = await fetch("http://localhost:3001/wp-json/scrapyard/v1/get-bot/"+this.props.scrapyardId)
         try {
             this.data = await data.json();
         } catch(err) {
+            this.setState({invalidId: true, loaded: true})
+            return
+        }
+        if (Array.isArray(this.data) && this.data.length == 0) {
             this.setState({invalidId: true, loaded: true})
             return
         }
@@ -70,12 +75,13 @@ export default class BotInfo extends React.Component {
                         <h2>
                             {this.props.name}
                         </h2>
-                        {this.type?<span className="type">{this.type}</span>:""}
+                        {this.data.organization?<span className="org">{this.data.organization}</span>:""}
                         {this.props.scrapyardId && !this.state.invalidId?(
                             <>
                                 {this.data.images.length > 0?<img className="picture" src={this.data.images[0].url} onLoad={this.onImgLoad} />:null}
                             </>
                         ):null}
+                        <p>{this.data?.description}</p>
                         <div className="buttons">
                             {this.data?(
                                 <a 

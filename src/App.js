@@ -7,6 +7,7 @@ import {
   Link
 } from "react-router-dom";
 import HashLoader from "react-spinners/HashLoader";
+import moment from 'moment';
 
 import Bracket from './Bracket'
 
@@ -46,7 +47,8 @@ export default class App extends React.Component {
     this.setState({ width: window.innerWidth, height: window.innerHeight });
   }
   updateData = async (bracket = null) => {
-    var data = await fetch("https://robobrawl.strempfer.dev/wp-json/robobrawl-bracket/v1/get-bracket/"+(bracket?bracket:this.state.bracket), {mode: 'no-cors'})
+    var data = await fetch("/wp-json/robobrawl-bracket/v1/get-bracket/"+(bracket?bracket:this.state.bracket), {mode: 'no-cors'})
+    //var data = await fetch("http://localhost:3001/wp-json/robobrawl-bracket/v1/get-bracket/"+(bracket?bracket:this.state.bracket))
     //var data = await fetch("http://localhost/")
     data = await data.json()
     if (data.length == 0) {
@@ -108,7 +110,8 @@ export default class App extends React.Component {
             </div>
           )}
           <div className="updatedAt">
-            Updated: {this.lastUpdate?this.lastUpdate.getHours()+":"+String(this.lastUpdate.getMinutes()).padStart(2,"0")+":"+String(this.lastUpdate.getSeconds()).padStart(2,"0"):"never"}
+            {/*Updated: {this.lastUpdate?this.lastUpdate.getHours()+":"+String(this.lastUpdate.getMinutes()).padStart(2,"0")+":"+String(this.lastUpdate.getSeconds()).padStart(2,"0"):"never"}*/}
+            Last updated {moment(this.lastUpdate).fromNow()}
           </div>
         </div>
       </Router>
